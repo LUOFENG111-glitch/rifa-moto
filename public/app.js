@@ -167,10 +167,8 @@ document.getElementById('purchase-form').addEventListener('submit', async (e) =>
             const message = `Hola! Acabo de apartar el boleto #${String(selectedTicket).padStart(3, '0')} para la ${raffleName}.\n\nMi nombre es: ${name}\nMi teléfono es: ${phone}\n\nMe gustaría acordar el pago.`;
             const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-            // Redirect to WhatsApp
-            setTimeout(() => {
-                window.open(whatsappUrl, '_blank');
-            }, 1000);
+            // Redirect to WhatsApp directly
+            window.location.href = whatsappUrl;
         } else {
             showToast(data.error || 'Error al comprar el boleto', 'error');
             resetBtn();
