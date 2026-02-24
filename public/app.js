@@ -52,9 +52,6 @@ function createTicketBtn(t) {
     btn.className = `ticket-btn${t.status === 'sold' ? ' sold' : ''}`;
     btn.setAttribute('aria-label', `Boleto ${t.number} - ${t.status === 'sold' ? 'Vendido' : 'Disponible'}`);
     btn.innerHTML = `<span class="ticket-num">${String(t.number).padStart(3, '0')}</span>`;
-    if (t.status !== 'sold') {
-        btn.addEventListener('click', () => openModal(t.number));
-    }
     return btn;
 }
 
@@ -76,7 +73,6 @@ function updateTicketDOM(num, status) {
         btn.className = 'ticket-btn';
         btn.setAttribute('aria-label', `Boleto ${num} - Disponible`);
         const clone = btn.cloneNode(true);
-        clone.addEventListener('click', () => openModal(num));
         btn.replaceWith(clone);
     }
 }
@@ -200,7 +196,6 @@ socket.on('raffle_reset', () => {
         if (btn) {
             btn.className = 'ticket-btn';
             const clone = btn.cloneNode(true);
-            clone.addEventListener('click', () => openModal(t.number));
             btn.replaceWith(clone);
         }
     });

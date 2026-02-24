@@ -147,7 +147,7 @@ app.post('/api/tickets/:num/purchase', (req, res) => {
                 db.run('COMMIT', () => {
                   const updatedTicket = { number: num, status: 'sold', buyer_id: buyerId };
                   io.emit('ticket_updated', updatedTicket);
-                  res.json({ success: true, ticket: updatedTicket, buyer: { name, phone, payment_method } });
+                  res.json({ success: true, ticket: updatedTicket, buyer: { name, phone } });
                 });
               }
             );
