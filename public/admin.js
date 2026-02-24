@@ -207,7 +207,6 @@ function renderBuyers(buyers) {
       <td><span class="ticket-badge">#${String(b.ticket_number).padStart(3, '0')}</span></td>
       <td>${escHtml(b.name)}</td>
       <td>${escHtml(b.phone)}</td>
-      <td>${escHtml(b.payment_method)}</td>
       <td>${b.created_at}</td>
       <td>
         <button class="btn-sm btn-outline" onclick="confirmFreeTicket(${b.ticket_number})">Liberar</button>
@@ -282,16 +281,14 @@ function setupButtons() {
         if (res.ok) showToast('Nombre actualizado ✔', 'success');
     });
 
-    // Manual sold
     $('btn-manual-sold').addEventListener('click', async () => {
         const num = parseInt($('manual-num').value);
         const name = $('manual-name').value.trim() || 'Admin';
         const phone = $('manual-phone').value.trim() || 'N/A';
-        const payment = $('manual-payment').value;
         if (!num || num < 1 || num > 400) { showToast('Número inválido (1-400)', 'error'); return; }
         const res = await authFetch(`/api/admin/tickets/${num}`, {
             method: 'PUT',
-            body: JSON.stringify({ status: 'sold', name, phone, payment_method: payment })
+            body: JSON.stringify({ status: 'sold', name, phone, payment_method: 'Acordado' })
         });
         if (res.ok) {
             showToast(`Boleto #${String(num).padStart(3, '0')} marcado como VENDIDO`, 'success');

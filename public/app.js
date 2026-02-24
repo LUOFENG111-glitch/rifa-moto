@@ -135,9 +135,8 @@ document.getElementById('purchase-form').addEventListener('submit', async (e) =>
 
     const name = document.getElementById('buyer-name').value.trim();
     const phone = document.getElementById('buyer-phone').value.trim();
-    const payment_method = document.getElementById('buyer-payment').value;
 
-    if (!name || !phone || !payment_method) {
+    if (!name || !phone) {
         showToast('Por favor completa todos los campos', 'error');
         return;
     }
@@ -151,7 +150,7 @@ document.getElementById('purchase-form').addEventListener('submit', async (e) =>
         const res = await fetch(`/api/tickets/${selectedTicket}/purchase`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, phone, payment_method })
+            body: JSON.stringify({ name, phone })
         });
         const data = await res.json();
 
@@ -160,7 +159,18 @@ document.getElementById('purchase-form').addEventListener('submit', async (e) =>
             updateTicketDOM(selectedTicket, 'sold');
             updateStats(Object.values(tickets));
             closeModal();
-            showToast(`🎉 ¡Boleto #${String(selectedTicket).padStart(3, '0')} comprado! ¡Buena suerte, ${name}!`, 'success');
+            showToast(`🎉 ¡Boleto #${String(selectedTicket).padStart(3, '0')} apartado! ¡Buena suerte, ${name}!`, 'success');
+
+            // Generate WhatsApp link
+            const whatsappNumber = '526674017749'; // Code 52 for Mexico + the user's number
+            const raffleName = settings.raffle_name || 'Rifa';
+            const message = `Hola! Acabo de apartar el boleto #${String(selectedTicket).padStart(3, '0')} para la ${raffleName}.\n\nMi nombre es: ${name}\nMi teléfono es: ${phone}\n\nMe gustaría acordar el pago.`;
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+            // Redirect to WhatsApp
+            setTimeout(() => {
+                window.open(whatsappUrl, '_blank');
+            }, 1000);
         } else {
             showToast(data.error || 'Error al comprar el boleto', 'error');
             resetBtn();

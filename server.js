@@ -109,9 +109,9 @@ app.get('/api/settings', (req, res) => {
 // POST - Purchase a ticket (atomic, concurrency-safe)
 app.post('/api/tickets/:num/purchase', (req, res) => {
   const num = parseInt(req.params.num);
-  const { name, phone, payment_method } = req.body;
+  const { name, phone } = req.body;
 
-  if (!name || !phone || !payment_method) {
+  if (!name || !phone) {
     return res.status(400).json({ error: 'Faltan datos del comprador' });
   }
   if (num < 1 || num > 400) {
@@ -134,7 +134,7 @@ app.post('/api/tickets/:num/purchase', (req, res) => {
 
         db.run(
           'INSERT INTO buyers (name, phone, payment_method, ticket_number) VALUES (?, ?, ?, ?)',
-          [name, phone, payment_method, num],
+          [name, phone, 'WhatsApp', num],
           function (err) {
             if (err) { db.run('ROLLBACK'); return res.status(500).json({ error: err.message }); }
             const buyerId = this.lastID;
@@ -297,7 +297,7 @@ app.post('/api/admin/reset', authMiddleware, (req, res) => {
 app.get('/api/admin/export', authMiddleware, (req, res) => {
   db.all(
     `SELECT b.ticket_number as "N° Boleto", b.name as "Nombre", b.phone as "Teléfono",
-     b.payment_method as "Método de Pago", b.created_at as "Fecha"
+     b.created_at as "Fecha"
      FROM buyers b ORDER BY b.ticket_number`,
     (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -307,7 +307,7 @@ app.get('/api/admin/export', authMiddleware, (req, res) => {
       XLSX.utils.book_append_sheet(wb, ws, 'Compradores');
 
       // Column widths
-      ws['!cols'] = [{ wch: 12 }, { wch: 25 }, { wch: 18 }, { wch: 20 }, { wch: 22 }];
+      ws['!cols'] = [{ wch: 12 }, { wch: 25 }, { wch: 18 }, { wch: 22 }];
 
       const buf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
       res.setHeader('Content-Disposition', 'attachment; filename=compradores_rifa.xlsx');
