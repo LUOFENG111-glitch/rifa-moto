@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — Panel de Rifa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="admin.css" />
+</head>
+
+<body>
+
+    <!-- ══════ LOGIN SCREEN ══════ -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-card">
+            <div class="login-logo">🏍️</div>
+            <h1 class="login-title">Panel Administrador</h1>
+            <p class="login-sub">Rifa Motocicleta</p>
+            <form id="login-form" autocomplete="off">
+                <div class="login-group">
+                    <label>Usuario</label>
+                    <input type="text" id="login-user" placeholder="admin" required />
+                </div>
+                <div class="login-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="login-pass" placeholder="••••••••" required />
+                </div>
+                <p class="login-error hidden" id="login-error">Credenciales incorrectas</p>
+                <button type="submit" class="btn-login" id="btn-login">Ingresar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════ ADMIN DASHBOARD ══════ -->
+    <div id="dashboard" class="dashboard hidden">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <span>🏍️</span>
+                <span>Rifa Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="tab-stats" id="nav-stats">📊 Estadísticas</button>
+                <button class="nav-btn" data-tab="tab-tickets" id="nav-tickets">🎫 Boletos</button>
+                <button class="nav-btn" data-tab="tab-buyers" id="nav-buyers">👥 Compradores</button>
+                <button class="nav-btn" data-tab="tab-settings" id="nav-settings">⚙️ Configuración</button>
+            </nav>
+            <button class="btn-logout" id="btn-logout">↩ Cerrar sesión</button>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main-content">
+
+            <!-- ── TAB: Stats ── -->
+            <section id="tab-stats" class="tab-panel active">
+                <div class="page-header">
+                    <h2>Estadísticas</h2>
+                    <div class="header-actions">
+                        <button class="btn-action" id="btn-export">⬇ Exportar Excel</button>
+                        <button class="btn-action danger" id="btn-reset">🔄 Reiniciar Rifa</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🎫</div>
+                        <div class="stat-info">
+                            <span class="stat-big" id="s-total">400</span>
+                            <span class="stat-lbl">Total Boletos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card sold">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <span class="stat-big" id="s-sold">0</span>
+                            <span class="stat-lbl">Vendidos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card avail">
+                        <div class="stat-icon">🔓</div>
+                        <div class="stat-info">
+                            <span class="stat-big" id="s-available">400</span>
+                            <span class="stat-lbl">Disponibles</span>
+                        </div>
+                    </div>
+                    <div class="stat-card money">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <span class="stat-big" id="s-revenue">$0</span>
+                            <span class="stat-lbl">Recaudado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-label-row">
+                        <span>Progreso de la rifa</span>
+                        <span id="s-pct">0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="s-progress"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── TAB: Tickets ── -->
+            <section id="tab-tickets" class="tab-panel">
+                <div class="page-header">
+                    <h2>Gestión de Boletos</h2>
+                    <div class="search-box">
+                        <input type="text" id="ticket-search" placeholder="🔍 Buscar número..." />
+                    </div>
+                </div>
+
+                <!-- Manual add sold -->
+                <div class="admin-ticket-form">
+                    <h3>Marcar boleto manualmente</h3>
+                    <div class="form-row">
+                        <input type="number" id="manual-num" placeholder="N° boleto (1-400)" min="1" max="400" />
+                        <input type="text" id="manual-name" placeholder="Nombre" />
+                        <input type="text" id="manual-phone" placeholder="Teléfono" />
+                        <select id="manual-payment">
+                            <option value="Manual">Manual</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Transferencia">Transferencia</option>
+                            <option value="Tarjeta">Tarjeta</option>
+                        </select>
+                        <button class="btn-sm btn-red" id="btn-manual-sold">Marcar VENDIDO</button>
+                        <button class="btn-sm btn-outline" id="btn-manual-available">Liberar</button>
+                    </div>
+                </div>
+
+                <div class="admin-grid" id="admin-ticket-grid"></div>
+            </section>
+
+            <!-- ── TAB: Buyers ── -->
+            <section id="tab-buyers" class="tab-panel">
+                <div class="page-header">
+                    <h2>Lista de Compradores</h2>
+                    <div class="search-box">
+                        <input type="text" id="buyer-search" placeholder="🔍 Buscar nombre o teléfono..." />
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="buyers-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Boleto</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Pago</th>
+                                <th>Fecha</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buyers-tbody"></tbody>
+                    </table>
+                    <p class="empty-msg hidden" id="buyers-empty">No hay compradores registrados.</p>
+                </div>
+            </section>
+
+            <!-- ── TAB: Settings ── -->
+            <section id="tab-settings" class="tab-panel">
+                <div class="page-header">
+                    <h2>Configuración</h2>
+                </div>
+
+                <div class="settings-cards">
+                    <div class="settings-card">
+                        <h3>💲 Precio del Boleto</h3>
+                        <div class="form-row">
+                            <input type="number" id="set-price" placeholder="50" min="1" />
+                            <button class="btn-sm btn-red" id="btn-save-price">Guardar</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🏷️ Nombre de la Rifa</h3>
+                        <div class="form-row">
+                            <input type="text" id="set-name" placeholder="Gran Rifa Suzuki GSX-R" />
+                            <button class="btn-sm btn-red" id="btn-save-name">Guardar</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🖼️ Imagen de la Motocicleta</h3>
+                        <div class="current-moto-preview">
+                            <img id="current-moto-thumb" src="" alt="Moto actual" />
+                        </div>
+                        <div class="file-upload-area" id="upload-area">
+                            <input type="file" id="moto-upload" accept="image/*" class="file-input" />
+                            <div class="upload-label" id="upload-label">
+                                <span>📷</span>
+                                <span>Arrastra o clic para subir imagen</span>
+                                <span class="upload-hint">JPG, PNG, WEBP — máx. 10MB</span>
+                            </div>
+                        </div>
+                        <button class="btn-sm btn-red" id="btn-upload-img" style="margin-top:0.75rem;" disabled>Subir
+                            Imagen</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="admin-toast"></div>
+
+    <!-- Confirm Dialog -->
+    <div class="confirm-backdrop hidden" id="confirm-backdrop">
+        <div class="confirm-box">
+            <p id="confirm-msg">¿Estás seguro?</p>
+            <div class="confirm-actions">
+                <button class="btn-sm btn-outline" id="confirm-no">Cancelar</button>
+                <button class="btn-sm btn-red" id="confirm-yes">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: rifa-moto
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASS
+        value: rifa2024
+      - key: JWT_SECRET
+        value: rifa_moto_secret_key_2024_xZ9mK
+      - key: PORT
+        value: 10000
