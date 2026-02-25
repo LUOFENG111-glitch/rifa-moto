@@ -265,7 +265,7 @@ app.put('/api/admin/settings', authMiddleware, (req, res) => {
   if (raffle_name !== undefined) updates.push(['raffle_name', raffle_name]);
 
   const stmt = db.prepare('UPDATE settings SET value=? WHERE key=?');
-  updates.forEach(([val, key]) => stmt.run(val, key));
+  updates.forEach(([key, val]) => stmt.run(val, key));
   stmt.finalize(() => {
     io.emit('settings_updated', { price, raffle_name });
     res.json({ success: true });
